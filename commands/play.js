@@ -26,7 +26,7 @@ module.exports = {
         ephemeral: true,
       });
     const music = interaction.options.getString("music");
-    const queue = await Player.nodes.create(interaction.guild, {
+    const queue = await global.Player.nodes.create(interaction.guild, {
       metadata: interaction.channel,
     });
 
@@ -35,7 +35,7 @@ module.exports = {
 
     //TODO: Fix when has music is playing push a new music to the queue
     await interaction.deferReply();
-    const track = await Player
+    const track = await global.Player
       .search(music, {
         requestedBy: interaction.user,
       })
