@@ -36,7 +36,7 @@ module.exports = {
 
         return void interaction.followUp({
 
-            content: success ? `✅ | Skipped **${currentTrack}**!` : "❌ | Something went wrong!"
+            content: success ? `✅ | Skipped **${currentTrack}**!` : "❌ | Stop the music"
 
         });
   },
