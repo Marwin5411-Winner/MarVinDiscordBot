@@ -11,6 +11,7 @@ RUN apk add --no-cache ffmpeg
 COPY package*.json ./
 
 # Install dependencies
+RUN npm cache clean --force 
 RUN npm install
 
 # Copy the rest of the application code
