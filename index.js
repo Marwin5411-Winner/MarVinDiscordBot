@@ -1,8 +1,8 @@
 const { Player } = require("discord-player");
 const { Client, Events, GatewayIntentBits, Collection } = require("discord.js");
 const { YouTubeExtractor } = require("@discord-player/extractor");
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require("node:fs");
+const path = require("node:path");
 global.client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -30,5 +30,5 @@ require("./src/loader.js");
 require("./src/events.js");
 
 
-
 client.login(client.config.app.token);
+

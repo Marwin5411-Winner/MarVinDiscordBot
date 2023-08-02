@@ -25,6 +25,10 @@ module.exports = {
         content: "You are not in my voice channel!",
         ephemeral: true,
       });
+    if (!interaction.options.getString("music")) return await interaction.reply({
+      content: "Please specify a music!",
+      ephemeral: true,
+    });
     const music = interaction.options.getString("music");
     const queue = await global.Player.nodes.create(interaction.guild, {
       metadata: interaction.channel,
