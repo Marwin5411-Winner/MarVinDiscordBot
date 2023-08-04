@@ -52,7 +52,7 @@ client.on(Events.ClientReady, async (message) => {
   try {
     const playlistData = await checkNewVideo();
     if (!playlistData) return;
-  const channel = client.channels.cache.get("1136680244212936916");
+  const channel = client.channels.cache.get(client.config.discordNotificationChannelId);
   const embed = new EmbedBuilder()
   .setTitle(playlistData.snippet.title)
   .setURL(`https://www.youtube.com/watch?v=${playlistData.snippet.resourceId.videoId}`)
