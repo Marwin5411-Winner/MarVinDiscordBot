@@ -6,11 +6,6 @@ const path = require("node:path");
 const cron = require("node-cron");
 const { checkNewVideo } = require("./utils/youtube.js");
 
-cron.schedule('* * * * *', () => {
-  
-  console.log('Run task every minute');
-});
-
 
 
 global.client = new Client({
@@ -31,13 +26,13 @@ global.client = new Client({
 
 client.config = require("./config");
 
-if (client.config.youtubeChannelId && client.config.youtubeApiKey && client.config.mongodbUrl) {
+if (client.config.youtubeChannelId && client.config.youtubeApiKey && client.config.mongodbUrl && client.config.discordNotificationChannelId) {
 require('./db');
 cron.schedule('2 * * * *', async () => {
   try {
   const playlistData = await checkNewVideo();
   if (!playlistData) return;
-  const channel = client.channels.cache.get("1136680244212936916");
+  const channel = client.channels.cache.get(client.config.discordNotificationChannelId);
   const embed = new EmbedBuilder()
   .setTitle(playlistData.snippet.title)
   .setURL(`https://www.youtube.com/watch?v=${playlistData.snippet.resourceId.videoId}`)
