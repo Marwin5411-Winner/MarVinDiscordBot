@@ -40,6 +40,10 @@ async function isNewVideo (playlistData) {
     const videoId = videoData.resourceId.videoId;
     //Query Database
     const lastVideo = await Notification.findOne({ channelId: channelId });
+
+    console.log(videoId)
+    console.log(lastVideo.lastVideoId)
+
     if (lastVideo === null) {
         //Store Last Video Data to Database
         const notification = new Notification({

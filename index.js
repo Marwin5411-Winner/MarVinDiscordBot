@@ -28,7 +28,7 @@ client.config = require("./config");
 
 if (client.config.youtubeChannelId && client.config.youtubeApiKey && client.config.mongodbUrl && client.config.discordNotificationChannelId) {
 require('./db');
-cron.schedule('2 * * * *', async () => {
+cron.schedule('*/2 * * * *', async () => {
   try {
   const playlistData = await checkNewVideo();
   if (!playlistData) return;
