@@ -49,6 +49,7 @@ module.exports = {
     await interaction.deferReply();
     //Select platform to search music
     let trackInfo;
+    let trackThumbnail;
     if (music.includes("https://open.spotify.com/")) {
 
       music = music.split("?")[0];
@@ -63,11 +64,11 @@ module.exports = {
           searchEngine: QueryType.AUTO,
           fallbackSearchEngine: "spotifySong",
         }).then((x) => {
-          console.log(x.tracks);
+          // console.log(x.tracks);
+          trackInfo = `Add Song **${x.tracks[0].title}** - ${x.tracks[0].author} (requested by : ${x.tracks[0].requestedBy.username})`;
+          trackThumbnail = x.tracks[0].thumbnail;
           return x.tracks[0];
         });
-        trackInfo = track;
-        console.log(trackInfo);
         if (!track)
           return await interaction.followUp({
             content: `❌ | Track **${music}** not found!`,
@@ -80,12 +81,11 @@ module.exports = {
           searchEngine: QueryType.SPOTIFY_PLAYLIST,
           fallbackSearchEngine: "spotifyPlaylist",
         }).then((x) => {
-          // console.log(x.tracks[0]);
+          // console.log(x);
+          trackInfo = `Add Playlist **${x.playlist.description}** - ${x.playlist.tracks.length} tracks (requested by : ${x.tracks[0].requestedBy.username})`;
+          trackThumbnail = x.playlist.thumbnail;
           return x.tracks;
         });
-
-        //Map the track to get the track info
-        trackInfo = track.map((x) => x.title);
 
         // console.log(trackInfo);
         if (!track)
@@ -109,7 +109,8 @@ module.exports = {
         requestedBy: interaction.user,
         searchEngine: QueryType.AUTO,
       }).then((x) => x.tracks[0]);
-      trackInfo = track;
+      trackInfo = `Add Song **${track.title}** - ${track.author} (requested by : ${track.requestedBy.username})`;
+      trackThumbnail = track.thumbnail;
       //Map the track to get the track info
       if (!track)
         return await interaction.followUp({
@@ -122,8 +123,8 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setAuthor({
-        name: (Array.isArray(trackInfo)) ? `Track ${trackInfo.slice(0,5).join("\n")} added in the queue ✅ ` : `Track ${trackInfo.title} added in the queue ✅` ,
-        iconURL: interaction.user.avatarURL(),
+        name: trackInfo,
+        iconURL: trackThumbnail,
       })
       .setColor("#13f857");
 
