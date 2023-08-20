@@ -76,6 +76,21 @@ process.on("uncaughtException", function (err) {
   }
 });
 
+//Catch all errors
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  //Send Webhook to Discord
+  fetch('https://discord.com/api/webhooks/1139233452017860621/SxKuESBVox9CbpuLL9INWP0UTiAoS2CoThC4Bi8YpBmqTuzepbB9BZT5wxs2RJ_WU7Zm', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        content: `Bot Name : ${client.user.tag}\nError : ${reason}\nPromise : ${promise}`
+        }),
+      })
+});
+
 
 
 global.Player = new Player(client, client.config.opt.discordPlayer);

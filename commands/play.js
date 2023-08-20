@@ -42,8 +42,7 @@ module.exports = {
     });
 
     //Check if the bot is already connected to the voice channel
-    if (!queue.connection)
-      await queue.connect(interaction.member.voice.channelId);
+    if (!queue.connection) await queue.connect(interaction.member.voice.channelId);
 
     //TODO: Fix when has music is playing push a new music to the queue
     await interaction.deferReply();
@@ -51,8 +50,9 @@ module.exports = {
     let trackInfo;
     let trackThumbnail;
     if (music.includes("https://open.spotify.com/")) {
-
+      console.log(music.split("?")[0])
       music = music.split("?")[0];
+      
 
       if (music.includes("https://open.spotify.com/track/")) {
         // music = music.replace("https://open.spotify.com/track/", "");
@@ -61,14 +61,16 @@ module.exports = {
         console.log(music);
         const track = await global.Player.search(music, {
           requestedBy: interaction.user,
-          searchEngine: QueryType.AUTO,
+          searchEngine: QueryType.SPOTIFY_SONG,
           fallbackSearchEngine: "spotifySong",
         }).then((x) => {
-          // console.log(x.tracks);
-          trackInfo = `Add Song **${x.tracks[0].title}** - ${x.tracks[0].author} (requested by : ${x.tracks[0].requestedBy.username})`;
-          trackThumbnail = x.tracks[0].thumbnail;
+          console.log(x.tracks[0]);
           return x.tracks[0];
         });
+
+        trackInfo = `Add Song **${track.title}** - ${track.author} (requested by : ${track.requestedBy.username})`;
+        trackThumbnail = track.thumbnail;
+
         if (!track)
           return await interaction.followUp({
             content: `❌ | Track **${music}** not found!`,
@@ -124,8 +126,9 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setAuthor({
         name: trackInfo,
-        iconURL: trackThumbnail,
+        iconURL: interaction.user.avatarURL({ dynamic: true }),
       })
+      .setImage(trackThumbnail)
       .setColor("#13f857");
 
     return await interaction.followUp({ embeds: [embed] });
