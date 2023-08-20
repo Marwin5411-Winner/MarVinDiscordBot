@@ -84,7 +84,7 @@ module.exports = {
           fallbackSearchEngine: "spotifyPlaylist",
         }).then((x) => {
           // console.log(x);
-          trackInfo = `Add Playlist **${x.playlist.description}** - ${x.playlist.tracks.length} tracks (requested by : ${x.tracks[0].requestedBy.username})`;
+          trackInfo = `Add Playlist **${x.playlist.title}** - ${x.playlist.tracks.length} tracks (requested by : ${x.tracks[0].requestedBy.username})`;
           trackThumbnail = x.playlist.thumbnail;
           return x.tracks;
         });
