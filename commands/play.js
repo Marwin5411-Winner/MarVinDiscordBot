@@ -83,20 +83,20 @@ module.exports = {
           searchEngine: QueryType.SPOTIFY_PLAYLIST,
           fallbackSearchEngine: "spotifyPlaylist",
         }).then((x) => {
-          // console.log(x);
-          trackInfo = `Add Playlist **${x.playlist.title}** - ${x.playlist.tracks.length} tracks (requested by : ${x.tracks[0].requestedBy.username})`;
-          trackThumbnail = x.playlist.thumbnail;
-          return x.tracks;
+          //console.log(x);
+          return x;
         });
-
         // console.log(trackInfo);
-        if (!track)
+        if (!track.tracks || track.playlist === null)
           return await interaction.followUp({
-            content: `❌ | Track **${music}** not found!`,
+            content: `❌ | Track **${music}** not found! or playlist is private!`,
           });
 
+          trackInfo = `Add Playlist **${track.playlist.description}** - ${track.playlist.tracks.length} tracks (requested by : ${track.tracks[0].requestedBy.username})`;
+          trackThumbnail = track.playlist.thumbnail;
+
         //put playlist to queue
-        await queue.addTrack(track);
+        await queue.addTrack(track.tracks);
 
         //Check if the bot is already playing music
       if (!queue.isPlaying()) {
