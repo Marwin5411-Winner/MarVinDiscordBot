@@ -1,6 +1,6 @@
 const { Player } = require("discord-player");
 const { Client, Events, GatewayIntentBits, Collection, EmbedBuilder } = require("discord.js");
-const { YouTubeExtractor, SpotifyExtractor } = require("@discord-player/extractor");
+const { BridgeProvider, BridgeSource } = require("@discord-player/extractor");
 const fs = require("node:fs");
 const path = require("node:path");
 const cron = require("node-cron");
@@ -21,7 +21,15 @@ global.client = new Client({
   ],
   disableMentions: "everyone",
 });
-//Send embed to specific channel
+
+global.Player = new Player(client, {
+  leaveOnEnd: true,
+});
+global.Player.extractors.loadDefault();
+
+
+
+
 
 
 client.config = require("./config");
@@ -93,9 +101,7 @@ process.on("unhandledRejection", (reason, promise) => {
 
 
 
-global.Player = new Player(client, client.config.opt.discordPlayer);
-global.Player.extractors.register(YouTubeExtractor, {});
-// global.Player.extractors.register(SpotifyExtractor, {});
+
 
 require("./src/loader.js");
 require("./src/events.js");
