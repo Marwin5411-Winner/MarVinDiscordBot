@@ -134,7 +134,7 @@ module.exports = {
     } else {
       const track = await global.Player.search(music, {
         requestedBy: interaction.user,
-        searchEngine: QueryType.AUTO,
+        searchEngine: QueryType.YOUTUBE_SEARCH,
       }).then((x) => x.tracks[0]);
       console.log(track);
       trackInfo = `Add Song **${track.title}** - ${track.author} (requested by : ${track.requestedBy.username}) From ${track.raw.source} `;

@@ -32,6 +32,7 @@ global.Player.extractors.loadDefault();
 
 
 
+
 client.config = require("./config");
 
 if (client.config.youtubeChannelId && client.config.youtubeApiKey && client.config.mongodbUrl && client.config.discordNotificationChannelId) {
