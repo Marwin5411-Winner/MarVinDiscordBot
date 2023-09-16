@@ -41,9 +41,6 @@ async function isNewVideo (playlistData) {
     //Query Database
     const lastVideo = await Notification.findOne({ channelId: channelId });
 
-    console.log(videoId)
-    console.log(lastVideo.lastVideoId)
-
     if (lastVideo === null) {
         //Store Last Video Data to Database
         const notification = new Notification({
@@ -57,6 +54,9 @@ async function isNewVideo (playlistData) {
     if (lastVideo.lastVideoId === videoId) {
         return false;
     }
+
+    console.log(videoId)
+    console.log(lastVideo?.lastVideoId || "null")
 
     //Update Last Video Data to Database
     lastVideo.lastVideoId = videoId;
