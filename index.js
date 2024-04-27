@@ -1,12 +1,16 @@
-const { Player } = require("discord-player");
-const { Client, Events, GatewayIntentBits, Collection, EmbedBuilder } = require("discord.js");
+const { Player, useMainPlayer } = require("discord-player");
+const {
+  Client,
+  Events,
+  GatewayIntentBits,
+  Collection,
+  EmbedBuilder,
+} = require("discord.js");
 const { BridgeProvider, BridgeSource } = require("@discord-player/extractor");
 const fs = require("node:fs");
 const path = require("node:path");
 const cron = require("node-cron");
 const { checkNewVideo } = require("./utils/youtube.js");
-
-
 
 global.client = new Client({
   intents: [
@@ -22,60 +26,55 @@ global.client = new Client({
   disableMentions: "everyone",
 });
 
-global.Player = new Player(client, {
-  leaveOnEnd: true,
-});
-global.Player.extractors.loadDefault();
-
-
-
-
-
-
-
 client.config = require("./config");
 
-if (client.config.youtubeChannelId && client.config.youtubeApiKey && client.config.mongodbUrl && client.config.discordNotificationChannelId) {
-require('./db');
-cron.schedule('*/2 * * * *', async () => {
-  try {
-  const playlistData = await checkNewVideo();
-  if (!playlistData) return;
-  const channel = client.channels.cache.get(client.config.discordNotificationChannelId);
-  const embed = new EmbedBuilder()
-  .setTitle(playlistData.snippet.title)
-  .setURL(`https://www.youtube.com/watch?v=${playlistData.snippet.resourceId.videoId}`)
-  .setThumbnail(playlistData.snippet.thumbnails.default.url)
-  .setDescription(playlistData.snippet.description || "No Description")
-  .setTimestamp(new Date(playlistData.snippet.publishedAt))
-  .setImage(playlistData.snippet.thumbnails.high.url)
-  .setColor("#FF0000")
-  channel.send({ embeds: [embed] });
-  } catch (error) {
-    console.log(error);
-  }
-  console.log('Run task every minute');
-});
+global.Player = new Player(client, client.config.opt.discordPlayer);
+global.Player.extractors.loadDefault();
 
 client.on(Events.ClientReady, async (message) => {
-  try {
-    const playlistData = await checkNewVideo();
-    if (!playlistData) return;
-  const channel = client.channels.cache.get(client.config.discordNotificationChannelId);
-  const embed = new EmbedBuilder()
-  .setTitle(playlistData.snippet.title)
-  .setURL(`https://www.youtube.com/watch?v=${playlistData.snippet.resourceId.videoId}`)
-  .setThumbnail(playlistData.snippet.thumbnails.default.url)
-  .setDescription(playlistData.snippet.description || "No Description")
-  .setTimestamp(new Date(playlistData.snippet.publishedAt))
-  .setImage(playlistData.snippet.thumbnails.high.url)
-  .setColor("#FF0000")
-  channel.send({ embeds: [embed] });
-  } catch (error) {
-    console.log(error);
-  }
+  const player = useMainPlayer();
+
+    // generate dependencies report
+    console.log(player.scanDeps());
+    // ^------ This is similar to discord-voip's `generateDependenciesReport()` function, but with additional informations related to discord-player
+
+    // log metadata query, search execution, etc.
+    player.on('debug', console.log);
+  
 });
 
+
+
+if (
+  client.config.youtubeChannelId &&
+  client.config.youtubeApiKey &&
+  client.config.mongodbUrl &&
+  client.config.discordNotificationChannelId
+) {
+  require("./db");
+  cron.schedule("*/2 * * * *", async () => {
+    try {
+      const playlistData = await checkNewVideo();
+      if (!playlistData) return;
+      const channel = client.channels.cache.get(
+        client.config.discordNotificationChannelId
+      );
+      const embed = new EmbedBuilder()
+        .setTitle(playlistData.snippet.title)
+        .setURL(
+          `https://www.youtube.com/watch?v=${playlistData.snippet.resourceId.videoId}`
+        )
+        .setThumbnail(playlistData.snippet.thumbnails.default.url)
+        .setDescription(playlistData.snippet.description || "No Description")
+        .setTimestamp(new Date(playlistData.snippet.publishedAt))
+        .setImage(playlistData.snippet.thumbnails.high.url)
+        .setColor("#FF0000");
+      channel.send({ embeds: [embed] });
+    } catch (error) {
+      console.log(error);
+    }
+    console.log("Run task every minute");
+  });
 }
 
 process.on("uncaughtException", function (err) {
@@ -89,26 +88,21 @@ process.on("uncaughtException", function (err) {
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at:", promise, "reason:", reason);
   //Send Webhook to Discord
-  fetch('https://discord.com/api/webhooks/1139233452017860621/SxKuESBVox9CbpuLL9INWP0UTiAoS2CoThC4Bi8YpBmqTuzepbB9BZT5wxs2RJ_WU7Zm', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+  fetch(
+    "https://discord.com/api/webhooks/1139233452017860621/SxKuESBVox9CbpuLL9INWP0UTiAoS2CoThC4Bi8YpBmqTuzepbB9BZT5wxs2RJ_WU7Zm",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        content: `Bot Name : ${client.user.tag}\nError : ${reason}\nPromise : ${promise}`
-        }),
-      })
+        content: `Bot Name : ${client.user.tag}\nError : ${reason}\nPromise : ${promise}`,
+      }),
+    }
+  );
 });
-
-
-
-
 
 require("./src/loader.js");
 require("./src/events.js");
 
-
-
-
 client.login(client.config.app.token);
-
