@@ -28,7 +28,7 @@ global.client = new Client({
 
 client.config = require("./config");
 
-global.Player = new Player(client, client.config.opt.discordPlayer);
+global.Player = new Player(client, client.config.opt);
 global.Player.extractors.loadDefault();
 
 client.on(Events.ClientReady, async (message) => {
