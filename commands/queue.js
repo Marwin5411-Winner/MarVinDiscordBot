@@ -23,7 +23,7 @@ module.exports = {
         .setAuthor({name: `Server queue - ${interaction.guild.name}`, iconURL: client.user.displayAvatarURL({ size: 1024, dynamic: true })})
         .setDescription(`Current ${queue.currentTrack.title}\n\n${tracks.slice(0, 5).join('\n')}\n\n${nextSongs}`)
         .setTimestamp()
-        .setFooter({ text: 'MarVin Developier Bot Code Base By MarVin', iconURL: interaction.member.avatarURL({ dynamic: true })})
+        .setFooter({ text: 'Develop By MarVin', iconURL: interaction.member.avatarURL({ dynamic: true })})
 
         interaction.reply({ embeds: [embed] });
     }

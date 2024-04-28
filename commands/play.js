@@ -132,6 +132,38 @@ module.exports = {
         }
       }
     } else {
+
+      if (music.includes("https://youtube.com/playlist?list=")) {
+        const track = await global.Player.search(music, {
+          requestedBy: interaction.user,
+          searchEngine: QueryType.YOUTUBE_PLAYLIST,
+        }).then((x) => {
+          console.log(x);
+          return x;
+        });
+        // console.log(trackInfo);
+        if (!track.tracks || track.playlist === null)
+          return await interaction.followUp({
+            content: `❌ | Track **${music}** not found! or playlist is private!`,
+          });
+
+        trackInfo = `Add Playlist **${track.playlist.description}** - ${track.playlist.tracks.length} tracks (requested by : ${track.tracks[0].requestedBy.username}) From ${track.playlist.source}`;
+        trackThumbnail = track.playlist.thumbnail;
+        trackUrl = track.playlist.url;
+
+        //put playlist to queue
+        await queue.addTrack(track.tracks);
+
+        //Check if the bot is already playing music
+        if (!queue.isPlaying()) {
+          console.log("not playing");
+          await queue.node.play();
+        }
+
+
+      } else {
+
+
       const track = await global.Player.search(music, {
         requestedBy: interaction.user,
         searchEngine: QueryType.YOUTUBE_SEARCH,
@@ -148,6 +180,7 @@ module.exports = {
 
       await queue.node.play(track);
     }
+  }
 
     const embed = new EmbedBuilder()
       .setAuthor({
